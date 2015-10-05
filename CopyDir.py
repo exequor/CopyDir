@@ -29,34 +29,35 @@ def sha1OfFile(filepath):
     with open(filepath, 'rb') as f:
         return hashlib.sha1(f.read()).hexdigest()
 
-def copydir(sourcePath, destinationPath):
+def copydir(sourcePath, destinationPath,ignore):
     #onlydirs = [f for f in os.listdir(mypath) if not os.path.isfile(os.path.join(sourcePath,f))]
     #print(onlydirs)
     #for onedir in onlydirs:
-
+        
         #copydir(mypath+"/"+onedir)
 
     onlyfiles = [f for f in os.listdir(sourcePath)]
-
+    
     for onefile in onlyfiles:
-        srcfile = sourcePath+"/"+onefile
-        dstfile = destinationPath+"/"+onefile
+        if (ignore.count(onefile) == 0):
+            srcfile = sourcePath+"/"+onefile
+            dstfile = destinationPath+"/"+onefile
 
-        if os.path.isdir(srcfile):
-            if not os.path.isdir(dstfile):
-                os.makedirs(dstfile)
-                print("Making Dir:",dstfile)
-            copydir(srcfile, dstfile)
-        elif os.path.isfile(srcfile):
-            if os.path.isfile(dstfile):
-                if os.path.getmtime(srcfile) == os.path.getmtime(dstfile):
-                    print ("DATE EQUAL: "+srcfile)
-                elif sha1OfFile(srcfile) == sha1OfFile(dstfile):
-                    print ("DATE DIFFERENT, SIG EQUAL: "+srcfile)
-                    os.utime(dstfile, (-1,os.path.getmtime(srcfile)))
+            if os.path.isdir(srcfile):
+                if not os.path.isdir(dstfile):
+                    os.makedirs(dstfile)
+                    print("Making Dir:",dstfile)
+                copydir(srcfile, dstfile,ignore)
+            elif os.path.isfile(srcfile):                  
+                if os.path.isfile(dstfile):
+                    if os.path.getmtime(srcfile) == os.path.getmtime(dstfile):
+                        print ("DATE EQUAL: "+srcfile)
+                    elif sha1OfFile(srcfile) == sha1OfFile(dstfile):
+                        print ("DATE DIFFERENT, SIG EQUAL: "+srcfile)
+                        os.utime(dstfile, (-1,os.path.getmtime(srcfile)))
+                    else:
+                        print ("DATE DIFFERENT, SIG DIFFERENT, COPY: "+srcfile)
+                        shutil.copyfile(srcfile, dstfile)
                 else:
-                    print ("DATE DIFFERENT, SIG DIFFERENT, COPY: "+srcfile)
                     shutil.copyfile(srcfile, dstfile)
-            else:
-                shutil.copyfile(srcfile, dstfile)
-                print ("UNSCHWING!")
+                    print ("Copying : "+srcfile)

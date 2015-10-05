@@ -23,3 +23,4 @@ SOFTWARE.
 gitPath = "../../Dev"
 syncPath = "./"
 activeProjects = ["block"]
+ignore = [".git"]

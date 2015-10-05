@@ -24,4 +24,4 @@ import Settings
 import CopyDir
 
 for project in Settings.activeProjects:
-    CopyDir.copydir(Settings.syncPath+"/"+project, Settings.gitPath+"/"+project)
+    CopyDir.copydir(Settings.syncPath+"/"+project, Settings.gitPath+"/"+project, Settings.ignore))
